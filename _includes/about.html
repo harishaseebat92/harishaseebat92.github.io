@@ -1,0 +1,36 @@
+<section id="about" class="section">
+  <div class="section-header">
+    <h2 class="section-title">About Me</h2>
+  </div>
+  
+  <div class="about-content">
+    <p class="about-text">{{ site.about_me }}</p>
+    
+    {% if site.skills.size > 0 %}
+    <div class="skills-section">
+      <h3 style="color: var(--text-primary); margin-bottom: 1rem; font-size: 1.125rem;">Skills & Technologies</h3>
+      <div class="skills-grid">
+        {% for skill in site.skills %}
+        <span class="skill-tag">{{ skill }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  
+  {% if site.highlights.size > 0 %}
+  <div class="highlights-grid">
+    {% for highlight in site.highlights %}
+    <div class="highlight-card">
+      <div class="highlight-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+        </svg>
+      </div>
+      <h4 class="highlight-title">{{ highlight.title }}</h4>
+      <p class="highlight-description">{{ highlight.description }}</p>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</section>

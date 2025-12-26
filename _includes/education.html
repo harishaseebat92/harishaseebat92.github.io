@@ -1,0 +1,26 @@
+{% if site.education.size > 0 %}
+<section id="education" class="section">
+  <div class="section-header">
+    <h2 class="section-title">Education</h2>
+  </div>
+  
+  <div class="education-grid">
+    {% for edu in site.education %}
+    <div class="education-card">
+      <div class="education-header">
+        <h3 class="education-school">{{ edu.school }}</h3>
+        <span class="education-date">{{ edu.date_range }}</span>
+      </div>
+      <p class="education-degree">{{ edu.degree }}</p>
+      {% if edu.achievements.size > 0 %}
+      <ul class="education-achievements">
+        {% for achievement in edu.achievements %}
+        <li>{{ achievement }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

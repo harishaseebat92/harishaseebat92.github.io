@@ -1,0 +1,28 @@
+{% if site.experience.size > 0 %}
+<section id="experience" class="section">
+  <div class="section-header">
+    <h2 class="section-title">Experience</h2>
+    <p class="section-subtitle">My professional journey</p>
+  </div>
+  
+  <div class="experience-list">
+    {% for job in site.experience %}
+    <div class="experience-item">
+      <div class="experience-dot"></div>
+      <div class="experience-header">
+        <h3 class="experience-company">{{ job.company }}</h3>
+        <span class="experience-date">{{ job.date_range }}</span>
+      </div>
+      <p class="experience-title">{{ job.title }}</p>
+      {% if job.bullets.size > 0 %}
+      <ul class="experience-bullets">
+        {% for bullet in job.bullets %}
+        <li>{{ bullet }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

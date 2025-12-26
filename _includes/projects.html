@@ -1,0 +1,35 @@
+{% if site.projects.size > 0 %}
+<section id="projects" class="section">
+  <div class="section-header">
+    <h2 class="section-title">Projects</h2>
+    <p class="section-subtitle">Selected work and side projects</p>
+  </div>
+  
+  <div class="projects-grid">
+    {% for project in site.projects %}
+    <div class="project-card">
+      <div class="project-header">
+        <h3 class="project-name">{{ project.name }}</h3>
+        {% if project.link %}
+        <a href="{{ project.link }}" target="_blank" rel="noopener" class="project-link" title="View project">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+            <polyline points="15 3 21 3 21 9"/>
+            <line x1="10" x2="21" y1="14" y2="3"/>
+          </svg>
+        </a>
+        {% endif %}
+      </div>
+      <p class="project-description">{{ project.description }}</p>
+      {% if project.skills.size > 0 %}
+      <div class="project-skills">
+        {% for skill in project.skills %}
+        <span class="project-skill">{{ skill }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}

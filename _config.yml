@@ -1,6 +1,171 @@
+# =============================================================================
+# Site Configuration - Haris Ansari Portfolio
+# =============================================================================
+
+# Basic Info
 title: "Haris Ansari"
-description: "Quantum + Scientific Computing Portfolio"
-theme: jekyll-theme-cayman
+name: "Haris Ansari"
+role: "Quantum + Scientific Computing Engineer"
+tagline: "I build scientific and quantum-adjacent software that turns complex physics into interactive, usable tools."
+description: "Portfolio of Haris Ansari - Quantum Technologies, Scientific Computing, and Visualization"
+
+# Theme (optional - we use custom layouts)
+# theme: jekyll-theme-cayman
 show_downloads: false
 baseurl: ""
-url: ""
+url: "https://harishaseebat92.github.io"
+
+# =============================================================================
+# Social Links
+# =============================================================================
+social:
+  email: "m23iqt003@iitj.ac.in"
+  linkedin: "https://www.linkedin.com/in/haris-ansari-647861176/"
+  github: "https://github.com/harishaseebat92"
+
+# =============================================================================
+# About Section
+# =============================================================================
+about_me: >
+  I'm an M.Tech (Quantum Technologies) graduate from IIT Jodhpur with a strong 
+  foundation in physics and a practical focus on building real, end-to-end quantum 
+  software systems. Most recently, I worked as a CTO Intern at Ansys Research (Synopsys), 
+  where I helped implement Hamiltonian simulation and the Quantum Lattice Boltzmann 
+  Method (QLBM) across multiple backends (simulators and QPUs). I enjoy designing 
+  products that combine quantum algorithms, high-performance computing, and 
+  interactive scientific visualization.
+
+# =============================================================================
+# Skills
+# =============================================================================
+skills:
+  - "Qiskit"
+  - "PennyLane"
+  - "Cirq"
+  - "QuTiP"
+  - "CUDA-Q"
+  - "Python"
+  - "C++"
+  - "Julia"
+  - "NumPy/SciPy"
+  - "Plotly"
+  - "PyVista"
+  - "Trame"
+  - "FastAPI"
+  - "React"
+  - "Docker"
+  - "Git"
+
+# =============================================================================
+# Highlights (Feature Cards)
+# =============================================================================
+highlights:
+  - title: "Quantum Workflows"
+    description: "Hamiltonian simulation, QLBM, open quantum systems, gate decompositions"
+  - title: "Multi-Backend Support"
+    description: "IBM Quantum (Qiskit Runtime), IonQ, local simulators, CUDA-Q"
+  - title: "Scientific Visualization"
+    description: "Plotly, PyVista, interactive web UIs with Trame"
+  - title: "Cloud Deployment"
+    description: "Docker + cloud-friendly single-port patterns (Hugging Face Spaces)"
+
+# =============================================================================
+# Projects
+# =============================================================================
+projects:
+  - name: "Quantum-Enhanced Simulation Suite"
+    description: >
+      A unified CAE-style web platform built with Trame to run hybrid quantum-classical 
+      simulations for electromagnetic scattering (EM) and Quantum Lattice Boltzmann 
+      Method (QLBM) with interactive 3D density rendering.
+    link: "https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing"
+    skills:
+      - "Qiskit"
+      - "Trame"
+      - "PyVista"
+      - "IBM Quantum"
+      - "IonQ"
+
+  - name: "MarkovianQ"
+    description: >
+      A Python library for simulating open quantum system dynamics using the GKSL 
+      Master Equation and benchmarking Hamiltonian simulation strategies.
+    link: "https://github.com/harishaseebat92/MarkovianQ"
+    skills:
+      - "Python"
+      - "QuTiP"
+      - "NumPy"
+      - "Quantum Simulation"
+
+  - name: "Quantum-Inspired Bin Packing"
+    description: >
+      Formulated and solved bin packing optimization using quantum annealing and 
+      QAOA; benchmarked on D-Wave hardware.
+    link: "https://github.com/harishaseebat92/Quantum_Inspired_Optimization"
+    skills:
+      - "QAOA"
+      - "D-Wave"
+      - "Optimization"
+
+  - name: "Variational Quantum Classifier"
+    description: >
+      Designed custom feature maps and benchmarked VQC performance on MNIST 
+      and Citrus datasets.
+    link: "https://github.com/ShisheerKaushik24/QML-proj-iitj"
+    skills:
+      - "QML"
+      - "Qiskit"
+      - "Machine Learning"
+
+# =============================================================================
+# Experience
+# =============================================================================
+experience:
+  - company: "Ansys Research (Synopsys)"
+    title: "CTO Intern"
+    date_range: "Apr 2025 – Dec 2025"
+    bullets:
+      - "Collaborated with a team of engineers to implement QLBM and Hamiltonian simulations targeting IBM Quantum and IonQ QPUs"
+      - "Designed and implemented variational Trotter compression with adaptive ansatz, reducing circuit depth by 99.7% while preserving fidelity (0.998)"
+      - "Prototyped CAE Web UI using FastAPI + React, then migrated to Trame and deployed on Hugging Face Spaces"
+
+  - company: "QIntern"
+    title: "Project Mentor"
+    date_range: "Jul 2025 – Oct 2025"
+    bullets:
+      - "Mentored teams building quantum computing prototypes including MarkovianQ"
+      - "Guided development of quantum PDE-solver prototypes"
+
+# =============================================================================
+# Education
+# =============================================================================
+education:
+  - school: "IIT Jodhpur"
+    degree: "M.Tech, Quantum Technologies"
+    date_range: "Jul 2023 – Jun 2025"
+    achievements:
+      - "GPA: 8.45"
+      - "Focus on quantum computing and simulation"
+
+  - school: "University of Hyderabad"
+    degree: "M.Sc, Physics"
+    date_range: "Nov 2020 – Jun 2022"
+    achievements:
+      - "GPA: 8.21"
+      - "Strong foundation in theoretical physics"
+
+  - school: "Jamia Millia Islamia"
+    degree: "B.Sc, Physics"
+    date_range: "Jul 2016 – Jul 2019"
+    achievements:
+      - "GPA: 7.53"
+
+# =============================================================================
+# Build Settings
+# =============================================================================
+markdown: kramdown
+highlighter: rouge
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
