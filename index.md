@@ -3,24 +3,22 @@ layout: default
 title: Home
 ---
 
-## Harish Aseebat
+## Haris Ansari
 
 I build scientific and quantum-adjacent software that turns complex physics into interactive, usable tools.
 
-- LinkedIn: <https://www.linkedin.com/in/harishaseebat92/>
-- Projects: [Quantum Multiphysics Web UI](./projects.html)
-
-## About
-
-I work at the intersection of **scientific computing**, **visualization**, and **quantum workflows**. I enjoy designing end-to-end systems: UI/UX, backend orchestration, provider integrations, and data/plot pipelines.
+- LinkedIn: <https://www.linkedin.com/in/haris-ansari-647861176/>
+- GitHub: <https://github.com/harishaseebat92>
+- About: [About Me](./about.html)
+- Projects: [Projects](./projects.html)
 
 ## Highlights
 
-- **Unified platform**: a single Trame server hosting multiple physics apps.
-- **Hardware-agnostic**: local simulation + IBM Quantum + IonQ + CUDA-Q.
-- **Interactive visualization**: Plotly + PyVista for time-series and 3D views.
-- **Cloud-ready**: container-first deployment and single-port hosting patterns.
+- **Quantum + scientific workflows**: Hamiltonian simulation, QLBM, open quantum systems
+- **Backends**: IBM Quantum (Qiskit Runtime), IonQ, local simulators, CUDA-Q
+- **Visualization**: Plotly, PyVista, interactive web UIs with Trame
+- **Deployment**: Docker + cloud-friendly single-port patterns (Hugging Face Spaces)
 
 ---
 
-If you’d like to collaborate or chat about quantum software + visualization, feel free to reach out via LinkedIn.
+If you’d like to collaborate or chat about quantum software + visualization, feel free to reach out on LinkedIn.

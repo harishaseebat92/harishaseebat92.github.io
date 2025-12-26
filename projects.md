@@ -5,32 +5,39 @@ title: Projects
 
 ## Projects
 
-## Quantum Multiphysics Web UI (EM Scattering + QLBM)
+### Quantum-Enhanced Simulation Suite (EM Scattering + QLBM)
 
-**What it is:** A unified web application for running and visualizing quantum-enabled physics workflows:
+A unified CAE-style web platform built with **Trame** to run hybrid quantum-classical simulations for:
 
-- **EM Scattering**: computes electromagnetic field time-series from expectation values.
-- **QLBM**: explores lattice Boltzmann-style fluid dynamics workflows with interactive 3D density visualization.
+- **Electromagnetic scattering (EM)**: time-series field values from expectation values.
+- **Quantum Lattice Boltzmann Method (QLBM)**: fluid workflow with interactive 3D density rendering.
 
-**Tech stack:** Python, Trame (Vuetify), Plotly, PyVista
+#### Backends and SDKs
 
-**Quantum SDKs / Backends:**
+- Qiskit (circuit construction, transpilation, Aer simulation)
+- IBM Quantum via Qiskit Runtime (EstimatorV2 / Sampler-style workflows)
+- IonQ via IonQProvider
+- CUDA-Q for GPU-accelerated paths
 
-- **Qiskit** (circuit build/transpile, Aer simulation)
-- **IBM Quantum** via **Qiskit Runtime** (EstimatorV2 / Sampler-style workflows)
-- **IonQ** via **IonQProvider**
-- **CUDA-Q** for GPU-accelerated paths (QLBM)
+Links:
 
-**Repository:** (replace this link with your GitHub repo URL)
+- Project brief: <https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing>
+- GitHub profile (repos): <https://github.com/harishaseebat92>
 
-- Repo URL: `https://huggingface.co/spaces/ansysresearch/quantum`
+### MarkovianQ: GKSL Master Equation Simulator
 
-**Optional demo link:**
+A Python library for simulating open quantum system dynamics and benchmarking Hamiltonian simulation strategies.
 
-- Demo URL: `https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing`
+- <https://github.com/harishaseebat92/MarkovianQ>
 
-**What I’m proud of:** Single-server architecture, async job status feedback, job-id based retrieval, and smooth visualization from raw quantum results.
+### Quantum-Inspired Bin Packing Optimization
 
----
+Formulated and solved bin packing using quantum annealing / QAOA; benchmarked on D-Wave hardware.
 
-More projects coming soon.
+- <https://github.com/harishaseebat92/Quantum_Inspired_Optimization/blob/main/Documentation/QOSF_coh10.pdf>
+
+### Variational Quantum Classifier
+
+Designed custom feature maps and benchmarked VQC performance on MNIST and Citrus datasets.
+
+- <https://github.com/ShisheerKaushik24/QML-proj-iitj/blob/master/src/Report.pdf>

@@ -1,10 +1,6 @@
-title: "Harish Aseebat"
+title: "Haris Ansari"
 description: "Quantum + Scientific Computing Portfolio"
 theme: jekyll-theme-cayman
-
-# Optional: show downloads button in theme header
 show_downloads: false
-
-# If you publish at https://<username>.github.io, leave baseurl empty
 baseurl: ""
 url: ""

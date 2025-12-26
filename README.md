@@ -1,25 +1,23 @@
-# Personal Portfolio Site (GitHub Pages)
+# harishaseebat92.github.io
 
-This folder contains a minimal GitHub Pages site built with Jekyll.
+This is the source for the personal GitHub Pages site.
 
-## Publish to GitHub Pages (personal site)
+## Local preview (optional)
 
-1. Create a new GitHub repository named exactly:
-   - `<your-github-username>.github.io`
+If you have Ruby/Jekyll installed, you can preview locally:
 
-2. Copy the contents of this `portfolio_site/` folder to the root of that repository.
+```powershell
+bundle exec jekyll serve
+```
 
-3. Commit + push.
+## Publish
 
-4. In GitHub: **Settings → Pages**
-   - Source: `Deploy from a branch`
-   - Branch: `main` (root)
+GitHub → Repo Settings → Pages:
 
-Your site will be available at:
+- Source: Deploy from a branch
+- Branch: `main`
+- Folder: `/ (root)`
 
-- `https://<your-github-username>.github.io/`
+The site will be available at:
 
-## Update links
-
-- Update the GitHub project link in `projects.md`
-- Keep your LinkedIn link in `index.md`
+- `https://harishaseebat92.github.io/`
