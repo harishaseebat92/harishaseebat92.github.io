@@ -78,7 +78,9 @@ projects:
       A unified CAE-style web platform built with Trame to run hybrid quantum-classical 
       simulations for electromagnetic scattering (EM) and Quantum Lattice Boltzmann 
       Method (QLBM) with interactive 3D density rendering.
-    link: "https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing"
+    link: "/projects/quantum-simulation-suite.html"
+    external_link: "https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing"
+    featured: true
     skills:
       - "Qiskit"
       - "Trame"

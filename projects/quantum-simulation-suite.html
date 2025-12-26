@@ -1,0 +1,428 @@
+---
+layout: project
+title: Quantum-Enhanced Simulation Suite
+description: A unified CAE-style web platform for hybrid quantum-classical simulations featuring EM scattering and QLBM fluid dynamics
+---
+
+<!-- Project Hero -->
+<section class="project-hero">
+  <div class="project-hero-content">
+    <div class="project-breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span>→</span>
+      <a href="{{ '/' | relative_url }}#projects">Projects</a>
+      <span>→</span>
+      <span>Quantum Simulation Suite</span>
+    </div>
+    
+    <h1>Quantum-Enhanced Simulation Suite</h1>
+    <p class="project-hero-subtitle">
+      A unified CAE-style web platform built with Trame to run hybrid quantum-classical 
+      simulations for electromagnetic scattering (EM) and Quantum Lattice Boltzmann 
+      Method (QLBM) with interactive 3D visualization.
+    </p>
+    
+    <div class="project-meta">
+      <div class="project-meta-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <span>Apr 2025 – Dec 2025</span>
+      </div>
+      <div class="project-meta-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+          <circle cx="12" cy="7" r="4"/>
+        </svg>
+        <span>Ansys Research (Synopsys)</span>
+      </div>
+      <div class="project-meta-item">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+          <polyline points="2 17 12 22 22 17"/>
+          <polyline points="2 12 12 17 22 12"/>
+        </svg>
+        <span>Quantum Computing + CAE</span>
+      </div>
+    </div>
+    
+    <div class="project-tags">
+      <span class="project-tag">Qiskit</span>
+      <span class="project-tag">CUDA-Q</span>
+      <span class="project-tag">Trame</span>
+      <span class="project-tag">PyVista</span>
+      <span class="project-tag">IBM Quantum</span>
+      <span class="project-tag">IonQ</span>
+      <span class="project-tag">Python</span>
+      <span class="project-tag">Docker</span>
+    </div>
+    
+    <div class="project-links">
+      <a href="https://drive.google.com/file/d/1klgPCGPvMGKOn2eyG2sCMDyHuJEk_i4E/view?usp=sharing" target="_blank" class="project-link-btn primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+        </svg>
+        View Documentation
+      </a>
+      <a href="https://github.com/harishaseebat92" target="_blank" class="project-link-btn secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+          <path d="M9 18c-4.51 2-5-2-7-2"/>
+        </svg>
+        GitHub Profile
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Content with Table of Contents -->
+<div class="project-content-wrapper">
+  <article class="project-content">
+    
+    <!-- Overview Section -->
+    <section id="overview" class="project-section">
+      <h2>Overview</h2>
+      <p>
+        The Quantum-Enhanced Simulation Suite is a comprehensive CAE (Computer-Aided Engineering) 
+        platform that brings quantum computing capabilities to physics simulations. Built during 
+        my internship at Ansys Research (Synopsys), this project demonstrates how quantum algorithms 
+        can accelerate and enhance traditional simulation workflows.
+      </p>
+      <p>
+        The platform supports two primary simulation modalities:
+      </p>
+      <ul>
+        <li><strong>Electromagnetic (EM) Scattering</strong> – Time-series field evolution computed via Hamiltonian simulation</li>
+        <li><strong>Quantum Lattice Boltzmann Method (QLBM)</strong> – Fluid dynamics with interactive 3D density visualization</li>
+      </ul>
+      <p>
+        Both workflows leverage quantum computing backends (IBM Quantum, IonQ) while maintaining 
+        fallback to classical simulators, making the platform accessible for demonstration and 
+        education even without QPU access.
+      </p>
+    </section>
+    
+    <!-- Key Features Section -->
+    <section id="features" class="project-section">
+      <h2>Key Features</h2>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">⚛️</div>
+          <h4>Multi-Backend Support</h4>
+          <p>Seamlessly switch between IBM Quantum, IonQ QPUs, Qiskit Aer, and CUDA-Q simulators.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎛️</div>
+          <h4>Interactive UI</h4>
+          <p>Trame-based web interface with real-time parameter adjustment and visualization.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h4>3D Visualization</h4>
+          <p>PyVista integration for interactive density plots and field evolution animations.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h4>Variational Compression</h4>
+          <p>99.7% circuit depth reduction using adaptive Trotter compression while preserving fidelity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🐳</div>
+          <h4>Docker Deployment</h4>
+          <p>Single-port deployment pattern compatible with Hugging Face Spaces and cloud platforms.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h4>Live Metrics</h4>
+          <p>Real-time circuit statistics, expectation values, and execution metadata display.</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Architecture Section -->
+    <section id="architecture" class="project-section">
+      <h2>System Architecture</h2>
+      <p>
+        The application follows a modular architecture with a unified Trame server managing 
+        both EM and QLBM workflows. The design prioritizes separation of concerns while 
+        enabling code reuse for common quantum operations.
+      </p>
+      
+      <h3>Application Flow</h3>
+      <p>
+        The main application (<code>app.py</code>) acts as the entry point, initializing the 
+        Trame server and loading both simulation modules. Each module manages its own state, 
+        UI components, and quantum circuit construction.
+      </p>
+      
+      <!-- Placeholder for app flowchart -->
+      <div class="diagram-grid">
+        <div class="diagram-card">
+          <img src="{{ '/assets/images/projects/qsim/app-flowchart.svg' | relative_url }}" alt="Application Architecture Flowchart">
+          <div class="diagram-card-caption">
+            <h4>Application Flowchart</h4>
+            <p>High-level architecture showing Trame server, modules, and backend connections</p>
+          </div>
+        </div>
+      </div>
+      
+      <h3>Module Structure</h3>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Purpose</th>
+            <th>Key Files</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>app.py</code></td>
+            <td>Main entry point, Trame server initialization, landing page</td>
+            <td>app.py</td>
+          </tr>
+          <tr>
+            <td><code>em/</code></td>
+            <td>Electromagnetic scattering simulation module</td>
+            <td>ui.py, simulation.py, qpu.py, geometry.py</td>
+          </tr>
+          <tr>
+            <td><code>qlbm/</code></td>
+            <td>Quantum Lattice Boltzmann fluid simulation</td>
+            <td>fluid.py, fluid3d_pyvista.py</td>
+          </tr>
+          <tr>
+            <td><code>utils/</code></td>
+            <td>Shared utilities, base functions, backend adapters</td>
+            <td>base_functions.py, base_ionq.py</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <!-- EM Scattering Section -->
+    <section id="em-simulation" class="project-section">
+      <h2>EM Scattering Simulation</h2>
+      <p>
+        The electromagnetic module implements Hamiltonian simulation for computing scattered 
+        field evolution. The physics is encoded in a Hamiltonian operator, and time evolution 
+        is performed using Trotter-Suzuki decomposition on quantum hardware.
+      </p>
+      
+      <h3>Workflow</h3>
+      <ol>
+        <li><strong>Geometry Definition</strong> – Define scattering geometry and excitation parameters</li>
+        <li><strong>Hamiltonian Construction</strong> – Build the electromagnetic Hamiltonian operator</li>
+        <li><strong>Circuit Generation</strong> – Trotterize the time evolution operator</li>
+        <li><strong>Variational Compression</strong> – Optionally compress deep circuits using adaptive ansatz</li>
+        <li><strong>Execution</strong> – Run on selected backend (simulator or QPU)</li>
+        <li><strong>Visualization</strong> – Plot time-series expectation values</li>
+      </ol>
+      
+      <!-- Placeholder for EM flowchart -->
+      <div class="diagram-grid">
+        <div class="diagram-card">
+          <img src="{{ '/assets/images/projects/qsim/em-flowchart.svg' | relative_url }}" alt="EM Simulation Flowchart">
+          <div class="diagram-card-caption">
+            <h4>EM Module Flowchart</h4>
+            <p>Detailed flow from geometry input to field visualization</p>
+          </div>
+        </div>
+      </div>
+      
+      <h3>Technical Highlights</h3>
+      <ul>
+        <li>Implements first and second-order Trotter decomposition</li>
+        <li>Variational circuit compression achieves 99.7% depth reduction</li>
+        <li>Supports multiple observables for field component extraction</li>
+        <li>Real-time circuit statistics (depth, gate count, 2Q gates)</li>
+      </ul>
+    </section>
+    
+    <!-- QLBM Section -->
+    <section id="qlbm-simulation" class="project-section">
+      <h2>QLBM Fluid Simulation</h2>
+      <p>
+        The Quantum Lattice Boltzmann Method module implements fluid dynamics simulation 
+        using quantum computing. The LBM algorithm naturally maps to quantum operations, 
+        with streaming and collision steps encoded as quantum gates.
+      </p>
+      
+      <h3>Workflow</h3>
+      <ol>
+        <li><strong>Grid Setup</strong> – Initialize lattice dimensions and boundary conditions</li>
+        <li><strong>State Encoding</strong> – Encode fluid distribution functions in qubits</li>
+        <li><strong>Collision Step</strong> – Apply BGK collision operator</li>
+        <li><strong>Streaming Step</strong> – Propagate distributions to neighboring cells</li>
+        <li><strong>Measurement</strong> – Extract macroscopic quantities (density, velocity)</li>
+        <li><strong>3D Visualization</strong> – Render density field using PyVista</li>
+      </ol>
+      
+      <!-- Placeholder for QLBM flowchart -->
+      <div class="diagram-grid">
+        <div class="diagram-card">
+          <img src="{{ '/assets/images/projects/qsim/qlbm-flowchart.svg' | relative_url }}" alt="QLBM Simulation Flowchart">
+          <div class="diagram-card-caption">
+            <h4>QLBM Module Flowchart</h4>
+            <p>Lattice Boltzmann quantum circuit flow with 3D rendering</p>
+          </div>
+        </div>
+      </div>
+      
+      <h3>Technical Highlights</h3>
+      <ul>
+        <li>CUDA-Q backend for GPU-accelerated simulation</li>
+        <li>Automatic CPU fallback for cloud deployment</li>
+        <li>Interactive 3D density iso-surfaces with PyVista</li>
+        <li>Time-stepping animation for flow evolution</li>
+      </ul>
+    </section>
+    
+    <!-- Tech Stack Section -->
+    <section id="tech-stack" class="project-section">
+      <h2>Technology Stack</h2>
+      
+      <h3>Quantum Computing</h3>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Technology</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Qiskit</td>
+            <td>Circuit construction, transpilation, Aer simulation</td>
+          </tr>
+          <tr>
+            <td>Qiskit Runtime</td>
+            <td>IBM Quantum execution (EstimatorV2, SamplerV2)</td>
+          </tr>
+          <tr>
+            <td>IonQ Provider</td>
+            <td>IonQ trapped-ion QPU access</td>
+          </tr>
+          <tr>
+            <td>CUDA-Q</td>
+            <td>GPU-accelerated quantum simulation</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <h3>Web & Visualization</h3>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Technology</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Trame</td>
+            <td>Python web framework for scientific apps</td>
+          </tr>
+          <tr>
+            <td>Vuetify 3</td>
+            <td>Material Design UI components</td>
+          </tr>
+          <tr>
+            <td>PyVista</td>
+            <td>3D visualization and rendering</td>
+          </tr>
+          <tr>
+            <td>Plotly</td>
+            <td>Interactive 2D charts and graphs</td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <h3>Infrastructure</h3>
+      <table class="tech-table">
+        <thead>
+          <tr>
+            <th>Technology</th>
+            <th>Purpose</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Docker</td>
+            <td>Containerized deployment</td>
+          </tr>
+          <tr>
+            <td>Nginx</td>
+            <td>Reverse proxy for single-port deployment</td>
+          </tr>
+          <tr>
+            <td>Hugging Face Spaces</td>
+            <td>Cloud hosting and demo environment</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+    
+    <!-- Results Section -->
+    <section id="results" class="project-section">
+      <h2>Results & Impact</h2>
+      
+      <div class="feature-grid">
+        <div class="feature-card">
+          <div class="feature-icon">📉</div>
+          <h4>99.7% Depth Reduction</h4>
+          <p>Variational Trotter compression dramatically reduces circuit complexity.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h4>0.998 Fidelity</h4>
+          <p>High fidelity preserved despite aggressive circuit compression.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h4>Cloud-Ready</h4>
+          <p>Single-port Docker deployment works on any cloud platform.</p>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Future Work Section -->
+    <section id="future-work" class="project-section">
+      <h2>Future Directions</h2>
+      <ul>
+        <li>Integration with additional quantum backends (Amazon Braket, Azure Quantum)</li>
+        <li>Extended geometry support for complex scattering scenarios</li>
+        <li>Real-time error mitigation techniques</li>
+        <li>Hybrid quantum-classical optimization loops</li>
+        <li>GPU-accelerated classical preprocessing</li>
+      </ul>
+    </section>
+    
+  </article>
+  
+  <!-- Table of Contents Sidebar -->
+  <aside>
+    <nav class="project-toc">
+      <h4>Contents</h4>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#features">Key Features</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#em-simulation">EM Simulation</a></li>
+        <li><a href="#qlbm-simulation">QLBM Simulation</a></li>
+        <li><a href="#tech-stack">Tech Stack</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#future-work">Future Work</a></li>
+      </ul>
+    </nav>
+  </aside>
+</div>
+
+<!-- Lightbox container added by JS -->

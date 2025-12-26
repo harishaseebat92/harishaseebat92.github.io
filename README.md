@@ -71,7 +71,21 @@ Edit CSS variables in `assets/css/style.css`:
 }
 ```
 
-## 📝 License
+## �️ Project diagrams (SVG recommended)
+
+The “Quantum-Enhanced Simulation Suite” case study page loads diagrams from:
+
+`assets/images/projects/qsim/`
+
+You can use **SVG** (recommended) for crisp, zoomable flowcharts:
+
+- `app-flowchart.svg`
+- `em-flowchart.svg`
+- `qlbm-flowchart.svg`
+
+If you prefer different filenames, update the `<img src="...">` paths in `projects/quantum-simulation-suite.html`.
+
+## �📝 License
 
 Feel free to use this template for your own portfolio!
 

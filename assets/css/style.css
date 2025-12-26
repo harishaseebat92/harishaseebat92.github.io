@@ -362,6 +362,26 @@ a:hover {
   border-radius: 12px;
   padding: 2rem;
   transition: all 0.3s ease;
+  position: relative;
+}
+
+.project-card.featured {
+  border-color: var(--accent-color);
+  background: linear-gradient(135deg, var(--bg-card) 0%, rgba(99, 102, 241, 0.05) 100%);
+}
+
+.project-featured-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--accent-color);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .project-card:hover {
@@ -381,6 +401,12 @@ a:hover {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--text-primary);
+  padding-right: 4rem;
+}
+
+.project-links-icons {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .project-link {
@@ -396,6 +422,20 @@ a:hover {
   color: var(--text-secondary);
   margin-bottom: 1.5rem;
   line-height: 1.7;
+}
+
+.project-read-more {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--accent-color-light);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.project-read-more:hover {
+  color: var(--accent-color);
+  text-decoration: none;
 }
 
 .project-skills {

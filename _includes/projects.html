@@ -7,18 +7,45 @@
   
   <div class="projects-grid">
     {% for project in site.projects %}
-    <div class="project-card">
+    <div class="project-card{% if project.featured %} featured{% endif %}">
+      {% if project.featured %}
+      <div class="project-featured-badge">Featured</div>
+      {% endif %}
       <div class="project-header">
         <h3 class="project-name">{{ project.name }}</h3>
-        {% if project.link %}
-        <a href="{{ project.link }}" target="_blank" rel="noopener" class="project-link" title="View project">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-            <polyline points="15 3 21 3 21 9"/>
-            <line x1="10" x2="21" y1="14" y2="3"/>
-          </svg>
-        </a>
-        {% endif %}
+        <div class="project-links-icons">
+          {% if project.link %}
+          {% if project.link contains '/' and project.link contains '.html' %}
+          <!-- Internal project page link -->
+          <a href="{{ project.link | relative_url }}" class="project-link" title="View details">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </a>
+          {% else %}
+          <!-- External link -->
+          <a href="{{ project.link }}" target="_blank" rel="noopener" class="project-link" title="View project">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" x2="21" y1="14" y2="3"/>
+            </svg>
+          </a>
+          {% endif %}
+          {% endif %}
+          {% if project.external_link %}
+          <a href="{{ project.external_link }}" target="_blank" rel="noopener" class="project-link" title="External docs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+              <polyline points="15 3 21 3 21 9"/>
+              <line x1="10" x2="21" y1="14" y2="3"/>
+            </svg>
+          </a>
+          {% endif %}
+        </div>
       </div>
       <p class="project-description">{{ project.description }}</p>
       {% if project.skills.size > 0 %}
@@ -27,6 +54,11 @@
         <span class="project-skill">{{ skill }}</span>
         {% endfor %}
       </div>
+      {% endif %}
+      {% if project.featured and project.link contains '.html' %}
+      <a href="{{ project.link | relative_url }}" class="project-read-more">
+        Read full case study →
+      </a>
       {% endif %}
     </div>
     {% endfor %}
