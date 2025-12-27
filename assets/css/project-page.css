@@ -260,7 +260,7 @@
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.3s ease;
 }
 
@@ -269,13 +269,33 @@
   box-shadow: 0 10px 40px rgba(99, 102, 241, 0.1);
 }
 
+.diagram-card img:hover {
+  filter: brightness(0.98);
+}
+
 .diagram-card img {
   width: 100%;
   height: auto;
+  max-height: min(70vh, 560px);
   display: block;
   cursor: zoom-in;
   background: #ffffff;
   padding: 0.75rem;
+  object-fit: contain;
+}
+
+/* Some exported SVGs can be extremely wide, which makes them look "cut".
+   This wrapper allows horizontal scroll as a fallback while keeping the
+   normal responsive behavior for typical diagrams. */
+.diagram-card .diagram-media {
+  background: #ffffff;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.diagram-card .diagram-media img {
+  background: transparent;
 }
 
 .diagram-card-caption {
