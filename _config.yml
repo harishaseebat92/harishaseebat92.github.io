@@ -99,14 +99,19 @@ projects:
       - "NumPy"
       - "Quantum Simulation"
 
-  - name: "Quantum-Inspired Bin Packing"
+  - name: "Quantum-Inspired Optimization"
     description: >
-      Formulated and solved bin packing optimization using quantum annealing and 
-      QAOA; benchmarked on D-Wave hardware.
-    link: "https://github.com/harishaseebat92/Quantum_Inspired_Optimization"
+      Solving combinatorial optimization problems (BPP, VRP, MAX-CUT) using both 
+      classical methods (OR-Tools, Pyomo) and quantum-inspired approaches (QAOA, 
+      quantum annealing on D-Wave).
+    link: "/projects/quantum-inspired-optimization.html"
+    featured: true
     skills:
       - "QAOA"
       - "D-Wave"
+      - "Quantum Annealing"
+      - "OR-Tools"
+      - "Pyomo"
       - "Optimization"
 
   - name: "Variational Quantum Classifier"
