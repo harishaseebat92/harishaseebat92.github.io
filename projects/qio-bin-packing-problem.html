@@ -63,6 +63,59 @@ description: MILP/QUBO formulations and classical vs quantum-inspired solvers fo
         In formal terms: given $n$ items with weights $w_1, w_2, \ldots, w_n$ and bin capacity $C$, we want
         a feasible assignment of items to bins that minimizes how many bins are used.
       </p>
+
+      <h3 style="margin-top: 1.25em;">Quantum optimization workflow (high-level)</h3>
+      <p>
+        Below is the workflow used in the repository to go from a classical formulation to a quantum (or quantum-inspired)
+        optimizer.
+      </p>
+
+      <!-- Web-native flowchart (TikZ-like) -->
+      <div style="max-width: 520px; margin: 16px auto 0;">
+        <div style="display:flex; flex-direction:column; gap: 12px; align-items:stretch;">
+          <div style="position:relative;">
+            <div style="background: rgba(0,102,204,0.08); border: 2px solid rgba(0,102,204,0.35); border-radius: 12px; padding: 12px 14px; text-align:center; font-weight: 700;">
+              Bin Packing Problem
+            </div>
+            <div style="text-align:left; font-size: 12px; color: rgba(0,0,0,0.7); margin-top: 6px;">Formulate</div>
+          </div>
+
+          <div style="text-align:center; color: rgba(0,102,204,0.9); font-weight: 700;">↓</div>
+
+          <div>
+            <div style="background: rgba(0,102,204,0.08); border: 2px solid rgba(0,102,204,0.35); border-radius: 12px; padding: 12px 14px; text-align:center; font-weight: 700;">
+              ILP Model <span style="font-weight: 500;">(Docplex)</span>
+            </div>
+            <div style="text-align:left; font-size: 12px; color: rgba(0,0,0,0.7); margin-top: 6px;">Convert (<code>from_docplex_mp</code>)</div>
+          </div>
+
+          <div style="text-align:center; color: rgba(0,102,204,0.9); font-weight: 700;">↓</div>
+
+          <div>
+            <div style="background: rgba(0,102,204,0.08); border: 2px solid rgba(0,102,204,0.35); border-radius: 12px; padding: 12px 14px; text-align:center; font-weight: 700;">
+              QUBO Model <span style="font-weight: 500;">(QuadraticProgram)</span>
+            </div>
+            <div style="text-align:left; font-size: 12px; color: rgba(0,0,0,0.7); margin-top: 6px;">Map (<code>to_ising</code>)</div>
+          </div>
+
+          <div style="text-align:center; color: rgba(0,102,204,0.9); font-weight: 700;">↓</div>
+
+          <div>
+            <div style="background: rgba(0,102,204,0.08); border: 2px solid rgba(0,102,204,0.35); border-radius: 12px; padding: 12px 14px; text-align:center; font-weight: 700;">
+              Ising Model
+            </div>
+            <div style="text-align:left; font-size: 12px; color: rgba(0,0,0,0.7); margin-top: 6px;">Solve (<code>QAOA</code>/<code>VQE</code>)</div>
+          </div>
+
+          <div style="text-align:center; color: rgba(0,102,204,0.9); font-weight: 700;">↓</div>
+
+          <div>
+            <div style="background: rgba(0,102,204,0.08); border: 2px solid rgba(0,102,204,0.35); border-radius: 12px; padding: 12px 14px; text-align:center; font-weight: 700;">
+              VQA Solver <span style="font-weight: 500;">(Qiskit)</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
 
     <section id="formulation" class="project-section">
@@ -277,6 +330,216 @@ description: MILP/QUBO formulations and classical vs quantum-inspired solvers fo
       </p>
     </section>
 
+    <section id="ilp-to-qubo" class="project-section">
+      <h2>4. ILP to QUBO Conversion</h2>
+      <p>
+        To solve BPP using quantum or quantum-inspired methods, the constrained ILP is typically transformed into a
+        <strong>Quadratic Unconstrained Binary Optimization (QUBO)</strong> problem. The high-level idea is to keep the original
+        objective, and convert constraints into <em>quadratic penalty terms</em> added to the objective.
+      </p>
+
+      <h3>4.1 Objective reformulation</h3>
+      <p>
+        The original objective stays the same:
+      </p>
+      $$
+      \min \sum_{j=1}^{m} y_j.
+      $$
+      <p>
+        To enforce capacity in an unconstrained setting, we add a quadratic penalty that becomes large when a bin is overloaded.
+        A common form is:
+      </p>
+      $$
+      P_{\text{capacity}} = \alpha \sum_{j=1}^{m} \left(Cy_j - \sum_{i=1}^{n} w_i x_{ij}\right)^2,
+      $$
+      <p style="color: rgba(0,0,0,0.75);">
+        where $\alpha$ is a large penalty weight. When $y_j=1$, the expression encourages the bin load to stay within capacity.
+        When $y_j=0$, it discourages assigning any items to that bin.
+      </p>
+
+      <h3>4.2 Unconstraining the assignment constraint</h3>
+      <p>
+        The assignment constraint
+        $$
+        \sum_{j=1}^{m} x_{ij} = 1 \quad \forall i
+        $$
+        can be converted into a penalty term:
+      </p>
+      $$
+      P_{\text{assign}} = \beta \sum_{i=1}^{n} \left(1 - \sum_{j=1}^{m} x_{ij}\right)^2,
+      $$
+      <p style="color: rgba(0,0,0,0.75);">
+        where $\beta$ is a large penalty weight. This penalizes any solution where an item is assigned to zero bins or multiple bins.
+      </p>
+
+      <h3>4.3 Capacity constraint as a quadratic penalty</h3>
+      <p>
+        The original capacity constraint
+        $$
+        \sum_{i=1}^{n} w_i x_{ij} \le C y_j
+        $$
+        is represented through the quadratic penalty (as above):
+      </p>
+      $$
+      P_{\text{capacity}} = \alpha \sum_{j=1}^{m} \left(Cy_j - \sum_{i=1}^{n} w_i x_{ij}\right)^2.
+      $$
+
+      <h3>4.4 Binary variable encoding</h3>
+      <p>
+        All variables used in the formulation are binary by construction:
+      </p>
+      $$
+      x_{ij} \in \{0,1\}, \quad y_j \in \{0,1\}.
+      $$
+
+      <h3>4.5 Final QUBO objective</h3>
+      <p>
+        The final QUBO objective combines the original objective and both penalty terms:
+      </p>
+      $$
+      Q(x,y) = \sum_{j=1}^{m} y_j
+      + \alpha \sum_{j=1}^{m} \left(Cy_j - \sum_{i=1}^{n} w_i x_{ij}\right)^2
+      + \beta \sum_{i=1}^{n} \left(1 - \sum_{j=1}^{m} x_{ij}\right)^2.
+      $$
+      <p style="color: rgba(0,0,0,0.75);">
+        Choosing $\alpha$ and $\beta$ large enough is important: too small and constraints are violated; too large and the energy landscape
+        may become poorly scaled for the optimizer.
+      </p>
+    </section>
+
+    <section id="quantum-approach" class="project-section">
+      <h2>5. Quantum approach</h2>
+      <p>
+        After converting the model into QUBO/Ising form, we can solve it using quantum (or quantum-inspired) optimization.
+        In this repository, the core workflow follows a <strong>Variational Quantum Algorithm (VQA)</strong> pattern.
+      </p>
+
+      <h3 id="vqa-qaoa">5.2 Variational approach (QAOA): steps in the VQA approach</h3>
+      <p>
+        A VQA alternates between a quantum circuit (state preparation + measurement) and a classical optimizer (parameter update).
+        The objective is to find a low-energy (ideally ground-state) solution of the problem Hamiltonian.
+      </p>
+
+      <ol>
+        <li>
+          <strong>Problem formulation (Ising Hamiltonian)</strong>
+          <p>
+            The optimization problem is mapped to an Ising Hamiltonian of the form:
+          </p>
+          $$
+          H = \sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j,
+          $$
+          <p style="color: rgba(0,0,0,0.75);">
+            where $h_i$ and $J_{ij}$ are problem-specific coefficients and $Z_i$ are Pauli-$Z$ operators acting on qubit $i$.
+            The bitstring corresponding to the <em>minimum</em> energy approximates the optimal solution (minimum bins with feasible packing).
+          </p>
+        </li>
+
+        <li>
+          <strong>Parameter initialization</strong>
+          <p>
+            Choose a parameterized quantum circuit (ansatz). For QAOA, this is typically built from alternating layers of
+            problem and mixer unitaries. Initialize parameters $\vec\theta$ (or $(\vec\gamma,\vec\beta)$ in QAOA).
+          </p>
+        </li>
+
+        <li>
+          <strong>Energy measurement</strong>
+          <p>
+            Execute the circuit to prepare a trial state $\lvert\psi(\vec\theta)\rangle$ and estimate the expected energy:
+          </p>
+          $$
+          \langle H \rangle = \langle \psi(\vec\theta) \rvert H \lvert \psi(\vec\theta) \rangle.
+          $$
+        </li>
+
+        <li>
+          <strong>Classical optimization</strong>
+          <p>
+            Use a classical optimizer (gradient-free or gradient-based) to update parameters $\vec\theta$ to reduce $\langle H \rangle$.
+          </p>
+        </li>
+
+        <li>
+          <strong>Iterative refinement</strong>
+          <p>
+            Repeat measurement + classical update until convergence, yielding optimized parameters $\vec\theta^{\*}$.
+          </p>
+        </li>
+
+        <li>
+          <strong>Solution interpretation</strong>
+          <p>
+            Measure the final state $\lvert\psi(\vec\theta^{\*})\rangle$ in the computational basis to obtain bitstrings.
+            Decode the best bitstring into the original decision variables ($x_{ij}$, $y_j$, and any slack variables), and interpret it
+            as a bin assignment.
+          </p>
+        </li>
+      </ol>
+    </section>
+
+    <section id="eigenstate-mapping" class="project-section">
+      <h2>6. Mapping eigenstates to QUBO variables</h2>
+      <p>
+        Solvers like QAOA/VQE return bitstrings (eigenstates) such as <code>101001...</code>. To interpret a bitstring as a valid packing,
+        we must know the exact ordering of binary variables used when building the QUBO.
+      </p>
+
+      <h3>6.1 Identify the ordering of variables</h3>
+      <p>
+        In the QUBO model, variables are flattened into a 1D list. An example ordering (as used in many bin-packing/QUBO encodings) is:
+      </p>
+      <div style="padding: 12px 14px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px;">
+        <code>
+          x0,0, x0,1, x1,0, x1,1, x2,0, x2,1, x3,0, x3,1, y0, y1,
+          capacity bin 0 @int slack @0, capacity bin 0 @int slack @1,
+          capacity bin 1 @int slack @0, capacity bin 1 @int slack @1,
+          capacity bin 2 @int slack @0, capacity bin 2 @int slack @1
+        </code>
+      </div>
+
+      <h3>6.2 Map an eigenstate to variables</h3>
+      <p>
+        Example eigenstate (bitstring) returned by a solver:
+      </p>
+      <div style="padding: 12px 14px; background: rgba(0,0,0,0.04); border: 1px solid rgba(0,0,0,0.08); border-radius: 10px;">
+        <code>eigenstate = [1,0,0,1,1,0,0,1,1,1,0,0,0,0,0,0]</code>
+      </div>
+
+      <p style="margin-top: 12px;">
+        Using the variable ordering above, we decode each bit into its corresponding variable:
+      </p>
+
+      <div style="overflow-x:auto; margin-top: 10px;">
+        <table style="width:100%; border-collapse: collapse; min-width: 520px;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:10px; border-bottom: 2px solid rgba(0,0,0,0.12);">Binary variable</th>
+              <th style="text-align:left; padding:10px; border-bottom: 2px solid rgba(0,0,0,0.12);">Eigenstate (0/1)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x0,0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x0,1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x1,0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x1,1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x2,0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x2,1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x3,0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">x3,1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">y0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">y1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">1</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 0 @int slack @0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 0 @int slack @1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 1 @int slack @0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 1 @int slack @1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 2 @int slack @0</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+            <tr><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">capacity bin 2 @int slack @1</td><td style="padding:10px; border-bottom: 1px solid rgba(0,0,0,0.08);">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <section id="notes" class="project-section">
       <h2>Notes</h2>
       <p>
@@ -295,6 +558,9 @@ description: MILP/QUBO formulations and classical vs quantum-inspired solvers fo
         <li><a href="#formulation">1. Mathematical formulation</a></li>
         <li><a href="#how-we-solve">2. How we solve it</a></li>
         <li><a href="#example">3. Small example instance</a></li>
+        <li><a href="#ilp-to-qubo">4. ILP to QUBO Conversion</a></li>
+        <li><a href="#quantum-approach">5. Quantum approach</a></li>
+        <li><a href="#eigenstate-mapping">6. Mapping eigenstates</a></li>
         <li><a href="#notes">Notes</a></li>
       </ul>
     </nav>
