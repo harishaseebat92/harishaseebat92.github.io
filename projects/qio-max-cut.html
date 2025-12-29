@@ -1,0 +1,117 @@
+---
+layout: project
+title: MAX-CUT — Quantum-Inspired Optimization
+description: QUBO/QAOA formulation of the MAX-CUT problem and comparisons with classical baselines.
+---
+
+<!-- Project Hero -->
+<section class="project-hero">
+  <div class="project-hero-content">
+    <div class="project-breadcrumb">
+      <a href="{{ '/' | relative_url }}">Home</a>
+      <span>→</span>
+      <a href="{{ '/' | relative_url }}#projects">Projects</a>
+      <span>→</span>
+      <a href="{{ '/projects/quantum-inspired-optimization.html' | relative_url }}">Quantum-Inspired Optimization</a>
+      <span>→</span>
+      <span>MAX-CUT</span>
+    </div>
+
+    <h1>MAX-CUT</h1>
+    <p class="project-hero-subtitle">
+      A canonical QUBO problem: partition a graph into two sets to maximize the number (or weight) of cut edges.
+    </p>
+
+    <div class="project-tags">
+      <span class="project-tag">MAX-CUT</span>
+      <span class="project-tag">Graphs</span>
+      <span class="project-tag">QUBO</span>
+      <span class="project-tag">QAOA</span>
+      <span class="project-tag">Quantum Annealing</span>
+      <span class="project-tag">NetworkX</span>
+    </div>
+
+    <div class="project-links">
+      <a href="https://github.com/harishaseebat92/Quantum_Inspired_Optimization" target="_blank" class="project-link-btn primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/>
+          <path d="M9 18c-4.51 2-5-2-7-2"/>
+        </svg>
+        View Repository
+      </a>
+      <a href="{{ '/projects/quantum-inspired-optimization.html' | relative_url }}" class="project-link-btn secondary">
+        ← Back to Quantum-Inspired Optimization
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="project-content-wrapper">
+  <article class="project-content">
+
+    <section id="overview" class="project-section">
+      <h2>Overview</h2>
+      <p>
+        MAX-CUT is a classic NP-hard graph optimization problem: split the vertex set into two groups so that the sum
+        of weights of edges crossing the split is maximized.
+      </p>
+      <p>
+        It maps very naturally to an Ising/QUBO objective, which is why it’s one of the most common “hello world”
+        benchmarks for quantum optimization (QAOA, annealing, etc.).
+      </p>
+    </section>
+
+    <section id="qubo" class="project-section">
+      <h2>QUBO / Ising formulation</h2>
+      <p>
+        With binary variables indicating which side of the cut each node is on, the objective can be written as a
+        quadratic function over binary/spin variables.
+      </p>
+      <ul>
+        <li><strong>Input:</strong> graph $G=(V,E)$ (optionally weighted)</li>
+        <li><strong>Output:</strong> partition of $V$ into two sets</li>
+        <li><strong>Objective:</strong> maximize cut weight</li>
+      </ul>
+    </section>
+
+    <section id="qaoa" class="project-section">
+      <h2>QAOA approach</h2>
+      <ul>
+        <li>Problem Hamiltonian from the MAX-CUT objective</li>
+        <li>Mixer Hamiltonian to explore bitstrings</li>
+        <li>Classical optimizer to tune parameters $(\gamma,\beta)$</li>
+      </ul>
+    </section>
+
+    <section id="baselines" class="project-section">
+      <h2>Classical baselines</h2>
+      <ul>
+        <li>Brute force for very small graphs</li>
+        <li>Local search / heuristics</li>
+        <li>Goemans–Williamson (for weighted graphs) as a strong approximation baseline (when included)</li>
+      </ul>
+    </section>
+
+    <section id="notes" class="project-section">
+      <h2>Notes</h2>
+      <p>
+        This page is part of my <a href="{{ '/projects/quantum-inspired-optimization.html' | relative_url }}">Quantum-Inspired Optimization</a>
+        coursework repository.
+      </p>
+    </section>
+
+  </article>
+
+  <aside class="project-sidebar">
+    <nav class="project-toc">
+      <h4>Contents</h4>
+      <ul>
+        <li><a href="#overview">Overview</a></li>
+        <li><a href="#qubo">QUBO / Ising formulation</a></li>
+        <li><a href="#qaoa">QAOA approach</a></li>
+        <li><a href="#baselines">Classical baselines</a></li>
+        <li><a href="#notes">Notes</a></li>
+      </ul>
+    </nav>
+  </aside>
+</div>

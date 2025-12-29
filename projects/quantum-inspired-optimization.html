@@ -106,114 +106,27 @@ description: Solving combinatorial optimization problems using quantum annealing
       <div style="margin-top: 1.5em; padding: 1em; background-color: #f5f5f5; border-radius: 8px; border-left: 4px solid #0066cc;">
         <strong>Repository:</strong> <a href="https://github.com/harishaseebat92/Quantum_Inspired_Optimization" target="_blank">github.com/harishaseebat92/Quantum_Inspired_Optimization</a>
       </div>
-    </section>
 
-    <section id="bin-packing" class="project-section">
-      <h2>Bin Packing Problem (BPP)</h2>
-      
+      <h3 style="margin-top: 1.5em;">Problem subsections</h3>
       <p>
-        The Bin Packing Problem is a classic NP-hard optimization problem where the goal is to pack a set of items 
-        into a minimum number of bins with given capacity constraints.
+        I’ve broken the repository work into focused pages for each problem so you can jump directly to the formulation
+        and solver notes.
       </p>
 
-      <h3>Problem Formulation</h3>
-      <p>
-        The BPP is formulated as a Mixed-Integer Linear Program (MILP) with binary decision variables:
-      </p>
-      <ul>
-        <li><strong>Objective:</strong> Minimize the number of bins used</li>
-        <li><strong>Constraints:</strong> Capacity constraints on bins, item-to-bin assignment constraints</li>
-      </ul>
-
-      <h3>Solutions Implemented</h3>
-      <div style="margin: 1.5em 0;">
-        <h4>Classical Approach</h4>
-        <ul>
-          <li>Solved using <strong>Pyomo</strong> with commercial solvers (CPLEX, Gurobi)</li>
-          <li>First-Fit Decreasing (FFD) heuristic for baseline</li>
-          <li>Optimal solution for small problem instances</li>
-        </ul>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; margin-top: 1em;">
+        <a href="{{ '/projects/qio-bin-packing-problem.html' | relative_url }}" style="display:block; padding: 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; text-decoration: none;">
+          <strong>Bin Packing Problem (BPP)</strong>
+          <div style="margin-top: 6px; color: rgba(0,0,0,0.7);">MILP → QUBO, classical baselines, QAOA/annealing.</div>
+        </a>
+        <a href="{{ '/projects/qio-vehicle-routing-problem.html' | relative_url }}" style="display:block; padding: 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; text-decoration: none;">
+          <strong>Vehicle Routing Problem (VRP)</strong>
+          <div style="margin-top: 6px; color: rgba(0,0,0,0.7);">OR-Tools/Pyomo baselines, QUBO constraints, quantum solvers.</div>
+        </a>
+        <a href="{{ '/projects/qio-max-cut.html' | relative_url }}" style="display:block; padding: 14px; border: 1px solid rgba(0,0,0,0.12); border-radius: 10px; text-decoration: none;">
+          <strong>MAX-CUT</strong>
+          <div style="margin-top: 6px; color: rgba(0,0,0,0.7);">Graph objective, natural QUBO mapping, QAOA notes.</div>
+        </a>
       </div>
-
-      <div style="margin: 1.5em 0;">
-        <h4>Quantum Approaches</h4>
-        <ul>
-          <li><strong>QUBO Formulation:</strong> Converted MILP to QUBO for quantum annealing</li>
-          <li><strong>D-Wave Quantum Annealer:</strong> Executed on actual quantum hardware</li>
-          <li><strong>QAOA with Qiskit:</strong> Variational quantum approach on simulators and QPUs</li>
-        </ul>
-      </div>
-
-      <h3>Key Results</h3>
-      <p>
-        Compared solution quality, execution time, and quantum resource utilization across classical and quantum methods 
-        for various problem sizes and constraints.
-      </p>
-    </section>
-
-    <section id="vehicle-routing" class="project-section">
-      <h2>Vehicle Routing Problem (VRP)</h2>
-      
-      <p>
-        The Vehicle Routing Problem is a combinatorial optimization problem where the goal is to find optimal routes 
-        for a fleet of vehicles to serve a set of customers while minimizing total distance/cost.
-      </p>
-
-      <h3>Problem Formulation</h3>
-      <p>
-        VRP is formulated as an optimization problem with:
-      </p>
-      <ul>
-        <li><strong>Objective:</strong> Minimize total route distance or operational cost</li>
-        <li><strong>Constraints:</strong> Each customer must be served exactly once, vehicle capacity limits, time windows (if applicable)</li>
-        <li><strong>Variants:</strong> Capacitated VRP (CVRP), VRP with Time Windows (VRPTW)</li>
-      </ul>
-
-      <h3>Solutions Implemented</h3>
-      <div style="margin: 1.5em 0;">
-        <h4>Classical Approach</h4>
-        <ul>
-          <li><strong>OR-Tools:</strong> Google's routing optimization library with advanced local search</li>
-          <li><strong>Pyomo:</strong> MILP formulation for exact solutions on smaller instances</li>
-          <li>Nearest Neighbor heuristic for baseline solutions</li>
-        </ul>
-      </div>
-
-      <div style="margin: 1.5em 0;">
-        <h4>Quantum Approaches</h4>
-        <ul>
-          <li><strong>QAOA Implementation:</strong> Encoding VRP constraints into QUBO</li>
-          <li><strong>Quantum Annealing:</strong> Execution on D-Wave with parameter tuning</li>
-          <li><strong>Hybrid Classical-Quantum:</strong> Quantum solver for specific subproblems</li>
-        </ul>
-      </div>
-
-      <h3>Key Results</h3>
-      <p>
-        Demonstrated scalability, solution quality trade-offs, and practical considerations when using quantum methods 
-        for real-world routing scenarios.
-      </p>
-    </section>
-
-    <section id="max-cut" class="project-section">
-      <h2>MAX-CUT Problem</h2>
-      
-      <p>
-        The MAX-CUT problem is a canonical NP-hard graph optimization problem: partition the vertices of a graph 
-        into two disjoint sets to maximize the number of edges between the two sets.
-      </p>
-
-      <h3>Why MAX-CUT Matters</h3>
-      <ul>
-        <li>Fundamental problem in complexity theory and operations research</li>
-        <li>Natural mapping to QUBO, making it ideal for quantum approaches</li>
-        <li>Real applications: circuit partitioning, clustering, resource allocation</li>
-      </ul>
-
-      <h3>Solutions Implemented</h3>
-      <p>
-        Implemented and compared multiple solution approaches demonstrating the quantum advantage potential.
-      </p>
     </section>
 
     <section id="learnings" class="project-section">
@@ -292,9 +205,6 @@ description: Solving combinatorial optimization problems using quantum annealing
       <h4>Contents</h4>
       <ul>
         <li><a href="#overview">Overview</a></li>
-        <li><a href="#bin-packing">Bin Packing Problem</a></li>
-        <li><a href="#vehicle-routing">Vehicle Routing Problem</a></li>
-        <li><a href="#max-cut">MAX-CUT Problem</a></li>
         <li><a href="#learnings">Key Learnings</a></li>
         <li><a href="#tech-stack">Technical Stack</a></li>
         <li><a href="#conclusion">Conclusion</a></li>
