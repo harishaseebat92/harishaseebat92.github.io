@@ -52,23 +52,599 @@ description: Classical (OR-Tools/Pyomo) and quantum-inspired (QAOA/annealing) ap
     <section id="overview" class="project-section">
       <h2>Overview</h2>
       <p>
-        The Vehicle Routing Problem (VRP) asks for optimal routes for a fleet of vehicles to serve a set of customers
-        while minimizing total distance/cost under constraints (capacity, visit-once, optional time windows, etc.).
-        It’s a central problem in operations research and logistics—and a good candidate to explore QUBO/QAOA-style
-        formulations.
+        The Vehicle Routing Problem (VRP) is a classic combinatorial optimization problem and a generalization of the
+        Traveling Salesperson Problem (TSP). Instead of one salesperson, we have a <em>fleet</em> of vehicles starting and ending
+        at a depot, and we must design a set of routes that serves all customers while minimizing total travel cost.
       </p>
+
+      <p>
+        In this repository, I focus on a practical and widely studied variant:
+        <strong>Vehicle Routing Problem with Time Windows (VRPTW)</strong>. VRPTW adds real-world constraints:
+      </p>
+
+      <ul>
+        <li><strong>Capacity constraints:</strong> each vehicle has a finite capacity; each customer has a demand.</li>
+        <li><strong>Time windows:</strong> each customer $j$ must start service within $[E_j, L_j]$; early arrivals must wait; late arrivals are infeasible.</li>
+      </ul>
     </section>
 
-    <section id="formulation" class="project-section">
-      <h2>Formulation</h2>
+    <section id="problem-understanding" class="project-section">
+      <h2>1. Problem understanding: from VRP to VRPTW</h2>
+
+      <h3>1.1 The core VRP</h3>
       <ul>
-        <li><strong>Objective:</strong> minimize total travel distance (or cost)</li>
-        <li><strong>Constraints:</strong> each customer visited once; depot start/end; vehicle capacity; sub-tour elimination; (optional) time windows</li>
-        <li><strong>Common variants:</strong> CVRP, VRPTW</li>
+        <li><strong>TSP:</strong> one route visits all cities exactly once and returns to start.</li>
+        <li>
+          <strong>VRP:</strong> $k$ vehicles start at a depot, service all customers, return to the depot, while minimizing the
+          <strong>total combined</strong> distance.
+        </li>
       </ul>
       <p>
-        For quantum-inspired approaches, the constraints are encoded into a QUBO using penalty terms.
+        VRP simultaneously solves <strong>clustering</strong> (which customers go on which route) and <strong>routing</strong>
+        (the order of visits).
       </p>
+
+      <h3>1.2 Adding time windows: VRPTW</h3>
+      <p>
+        In VRPTW, each customer $j$ has a time window $[E_j, L_j]$ and a service time $S_j$. A vehicle must begin service
+        within the window; if it arrives early, it waits.
+      </p>
+    </section>
+    </section>
+    <section id="milp" class="project-section">
+      <h2>2. Formal MILP model formulation (VRPTW)</h2>
+      <p>
+        To solve VRPTW exactly for small instances (and to create a clean reference formulation), we write it as a
+        Mixed-Integer Linear Program (MILP).
+      </p>
+
+      <h3>2.1 Indices and sets</h3>
+      <ul>
+        <li>$N = \{0,1,\ldots,n\}$: all nodes (0 is the depot, 1..n are customers)</li>
+        <li>$V = \{1,\ldots,k\}$: available vehicles</li>
+      </ul>
+
+      <h3>2.2 Parameters</h3>
+      <ul>
+        <li>$d_{ij}$: distance / travel time from node $i$ to node $j$ (often assume distance = time)</li>
+        <li>$D_j$: demand of customer $j$ (with $D_0=0$)</li>
+        <li>$V_{cap}$: capacity of each vehicle</li>
+        <li>$S_j$: service time at node $j$ (with $S_0=0$)</li>
+        <li>$E_j, L_j$: earliest/latest time service may begin at node $j$</li>
+        <li>$M$: large constant (Big-M) for conditional constraints</li>
+      </ul>
+
+      <h3>2.3 Decision variables</h3>
+      <ul>
+        <li>
+          $x_{ijk} \in \{0,1\}$: 1 if vehicle $k$ travels directly from node $i$ to node $j$.
+        </li>
+        <li>
+          $s_j \ge 0$: service <em>start</em> time at node $j$.
+          This handles waiting naturally (if a vehicle arrives early, it waits until $E_j$, so $s_j$ stays within the window).
+        </li>
+      </ul>
+
+      <h3>2.4 Objective function</h3>
+      <p>Minimize the total travel distance of all vehicles:</p>
+      $$
+      \min Z = \sum_{k \in V} \sum_{i \in N} \sum_{j \in N,\ i \ne j} d_{ij} \cdot x_{ijk}
+      $$
+
+      <h3>2.5 Constraints</h3>
+
+      <h4>Constraint 1: customer visitation</h4>
+      <p>Every customer must be visited exactly once by one vehicle:</p>
+      $$
+      \sum_{k \in V} \sum_{i \in N,\ i \ne j} x_{i,j,k} = 1 \quad \forall j \in N \setminus \{0\}
+      $$
+
+      <h4>Constraint 2: route continuity (flow conservation)</h4>
+      <p><strong>Depot flow:</strong> for each vehicle, number of departures equals number of returns:</p>
+      $$
+      \sum_{j \in N \setminus \{0\}} x_{0,j,k} = \sum_{i \in N \setminus \{0\}} x_{i,0,k} \quad \forall k \in V
+      $$
+      <p><strong>Customer flow:</strong> if a vehicle arrives at a customer, it must also depart:</p>
+      $$
+      \sum_{i \in N,\ i \ne j} x_{i,j,k} = \sum_{\ell \in N,\ \ell \ne j} x_{j,\ell,k} \quad \forall j \in N \setminus \{0\},\ \forall k \in V
+      $$
+
+      <h4>Constraint 3: vehicle capacity</h4>
+      <p>Total demand served by each vehicle cannot exceed capacity:</p>
+      $$
+      \sum_{j \in N \setminus \{0\}} D_j\left(\sum_{i \in N} x_{i,j,k}\right) \le V_{cap} \quad \forall k \in V
+      $$
+
+      <h4>Constraint 4: time window adherence</h4>
+      $$
+      E_j \le s_j \le L_j \quad \forall j \in N \setminus \{0\}
+      $$
+
+      <h4>Constraint 5: time propagation (Big-M)</h4>
+      <p>
+        If vehicle $k$ travels $i \to j$, then service at $j$ must start after service at $i$ plus travel time.
+        Big-M turns this constraint “off” when $x_{i,j,k}=0$:
+      </p>
+      $$
+      s_j \ge s_i + S_i + d_{ij} - M\,(1 - x_{i,j,k}) \quad \forall i,j \in N,\ i \ne j,\ \forall k \in V
+      $$
+
+      <h4>Variable domains</h4>
+      $$
+      x_{ijk} \in \{0,1\} \quad \forall i,j \in N,\ \forall k \in V,\qquad s_j \ge 0 \quad \forall j \in N
+      $$
+    </section>
+
+    <section id="full-model" class="project-section">
+      <h2>3. Complete MILP model summary</h2>
+
+      <p><strong>Minimize</strong></p>
+      $$
+      Z = \sum_{k \in V} \sum_{i \in N} \sum_{j \in N,\ i \ne j} d_{ij} \cdot x_{ijk}
+      $$
+
+      <p><strong>Subject to</strong></p>
+      $$
+      \sum_{k \in V} \sum_{i \in N,\ i \ne j} x_{i,j,k} = 1 \quad \forall j \in N \setminus \{0\}
+      $$
+      $$
+      \sum_{j \in N \setminus \{0\}} x_{0,j,k} = \sum_{i \in N \setminus \{0\}} x_{i,0,k} \quad \forall k \in V
+      $$
+      $$
+      \sum_{i \in N,\ i \ne j} x_{i,j,k} = \sum_{\ell \in N,\ \ell \ne j} x_{j,\ell,k} \quad \forall j \in N \setminus \{0\},\ \forall k \in V
+      $$
+      $$
+      \sum_{j \in N \setminus \{0\}} D_j\left(\sum_{i \in N} x_{i,j,k}\right) \le V_{cap} \quad \forall k \in V
+      $$
+      $$
+      E_j \le s_j \le L_j \quad \forall j \in N \setminus \{0\}
+      $$
+      $$
+      s_j \ge s_i + S_i + d_{ij} - M\,(1 - x_{i,j,k}) \quad \forall i,j \in N,\ i \ne j,\ \forall k \in V
+      $$
+      $$
+      x_{ijk} \in \{0,1\} \quad \forall i,j \in N,\ \forall k \in V,\qquad s_j \ge 0 \quad \forall j \in N
+      $$
+    </section>
+
+    <section id="ortools-notebook" class="project-section">
+      <h2>4. OR-Tools implementation (Notebook walkthrough)</h2>
+      <p>
+        This section mirrors the accompanying notebook (<code>Quantum_Inspired_Optimization/VRP/or_tools.ipynb</code>) and shows
+        how to implement VRPTW in <strong>Google OR-Tools</strong> using a routing model with <em>dimensions</em> for capacity and time.
+        I’ve kept the structure close to the notebook, but formatted it for the website.
+      </p>
+
+      <section id="ortools-understanding" class="project-subsection">
+        <h3>4.1 Understanding VRPTW (constraints recap)</h3>
+        <p>Each customer has:</p>
+        <ul>
+          <li>a demand (load to deliver/pick up),</li>
+          <li>a time window during which service must start,</li>
+          <li>a fixed service duration.</li>
+        </ul>
+        <p>Each vehicle has:</p>
+        <ul>
+          <li>a limited capacity,</li>
+          <li>a route that begins and ends at the depot.</li>
+        </ul>
+        <p>
+          The goal is to <strong>minimize total travel distance (or time)</strong> while ensuring:
+        </p>
+        <ol>
+          <li><strong>Customer visitation:</strong> each customer is visited exactly once by exactly one vehicle.</li>
+          <li><strong>Route continuity:</strong> if a vehicle visits a customer, it also leaves it, forming a continuous route.</li>
+          <li><strong>Vehicle capacity:</strong> served demand per vehicle does not exceed its capacity.</li>
+          <li><strong>Time windows:</strong> service begins within $[E_j, L_j]$; early arrival implies waiting; late arrival is infeasible.</li>
+          <li><strong>Service + travel timing:</strong> time propagation must account for travel time and service time.</li>
+        </ol>
+      </section>
+
+      <section id="ortools-imports" class="project-subsection">
+        <h3>4.2 Imports</h3>
+        <pre><code class="language-python">import csv
+import io
+import math
+import matplotlib.pyplot as plt
+from ortools.constraint_solver import routing_enums_pb2
+from ortools.constraint_solver import pywrapcp
+
+# For displaying plots inline in the notebook
+%matplotlib inline
+import pandas as pd
+</code></pre>
+        <p>
+          For the portfolio page we keep the notebook’s imports as-is. In a pure <code>.py</code> script, you would remove
+          <code>%matplotlib inline</code>.
+        </p>
+      </section>
+
+      <section id="ortools-data-model" class="project-subsection">
+        <h3>4.3 The data model</h3>
+        <p>
+          For a self-contained example, the notebook uses a small synthetic dataset embedded as CSV text. The schema is:
+        </p>
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>customer_id</code></td>
+                <td>Unique ID of each location (0 is the depot)</td>
+              </tr>
+              <tr>
+                <td><code>x</code>, <code>y</code></td>
+                <td>Coordinates on a 2D plane</td>
+              </tr>
+              <tr>
+                <td><code>demand</code></td>
+                <td>Load required at the customer</td>
+              </tr>
+              <tr>
+                <td><code>time_window_start</code>, <code>time_window_end</code></td>
+                <td>Allowed service start time window</td>
+              </tr>
+              <tr>
+                <td><code>service_time</code></td>
+                <td>Time required to serve the customer</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>
+          The notebook then computes a full Euclidean distance matrix, and bundles everything into a <code>data</code> dictionary.
+          OR-Tools expects integer costs, so distances are rounded to integers.
+        </p>
+
+        <pre><code class="language-python">def compute_euclidean_distance(loc1, loc2):
+    """Calculates the rounded Euclidean distance between two points."""
+    # We round to an integer because OR-Tools works with integers for
+    # travel time and distance. This implies a speed of 1 unit dist / 1 unit time.
+    return int(math.sqrt((loc1[0] - loc2[0])**2 + (loc1[1] - loc2[1])**2))
+
+def create_data_model():
+    """Stores the data for the problem."""
+    
+    # --- 1. Load Our Synthetic Dataset ---
+    # We embed the CSV data as a string for a self-contained example.
+    csv_data = """customer_id,x,y,demand,time_window_start,time_window_end,service_time
+0,40,50,0,0,1236,0
+1,45,68,10,912,967,10
+2,45,70,30,825,870,10
+3,42,66,10,65,146,10
+4,42,68,10,727,782,10
+5,42,69,20,614,659,10
+6,40,69,10,150,221,10
+7,40,66,10,621,682,10
+8,38,68,20,812,867,10
+9,38,70,10,90,161,10
+10,35,66,10,308,379,10
+"""
+    
+    locations = []
+    demands = []
+    time_windows = []
+    service_times = []
+
+    f = io.StringIO(csv_data)
+    reader = csv.reader(f)
+    next(reader)  # Skip the header row
+    
+    for row in reader:
+        locations.append((int(row[1]), int(row[2])))
+        demands.append(int(row[3]))
+        time_windows.append((int(row[4]), int(row[5])))
+        service_times.append(int(row[6]))
+    # --- 2. Calculate Distance Matrix ---
+    num_locations = len(locations)
+    distance_matrix = [[0] * num_locations for _ in range(num_locations)]
+    for i in range(num_locations):
+        for j in range(num_locations):
+            distance_matrix[i][j] = compute_euclidean_distance(locations[i], locations[j])
+
+    # --- 3. Define Global Problem Parameters ---
+    data = {}
+    data['locations'] = locations
+    data['demands'] = demands
+    data['time_windows'] = time_windows
+    data['service_times'] = service_times
+    data['distance_matrix'] = distance_matrix
+    data['num_vehicles'] = 2
+    data['vehicle_capacities'] = [100] * data['num_vehicles']  # List, one for each vehicle
+    data['depot'] = 0 # The depot is location 0
+    
+    return data
+
+create_data_model()["vehicle_capacities"]
+</code></pre>
+
+        <pre><code class="language-python"># Display the data as a DataFrame for better visualization
+
+data = create_data_model()
+df = pd.DataFrame({
+    'customer_id': range(len(data['locations'])),
+    'x': [loc[0] for loc in data['locations']],
+    'y': [loc[1] for loc in data['locations']],
+    'demand': data['demands'],
+    'time_window_start': [tw[0] for tw in data['time_windows']],
+    'time_window_end': [tw[1] for tw in data['time_windows']],
+    'service_time': data['service_times']
+})
+
+df
+</code></pre>
+      </section>
+
+      <section id="ortools-routing-model" class="project-subsection">
+        <h3>4.4 Create the OR-Tools routing model</h3>
+        <p>
+          OR-Tools uses a <code>RoutingIndexManager</code> to map between your “external” customer IDs and the solver’s internal
+          indices. Then <code>pywrapcp.RoutingModel</code> stores the routing problem, registered callbacks, and dimensions.
+        </p>
+        <pre><code class="language-python"># 1. Create Routing Manager and Model
+
+manager = pywrapcp.RoutingIndexManager(
+    len(data['distance_matrix']), data['num_vehicles'], data['depot']
+)  # The manager maps our "customer IDs" to the solver's internal indices.
+
+routing = pywrapcp.RoutingModel(manager) # Register callbacks (for distance, time, or cost between nodes),
+#Add constraints (capacity, time windows, etc.) andSet the search strategy and cost function
+</code></pre>
+      </section>
+
+      <section id="ortools-cost" class="project-subsection">
+        <h3>4.5 Cost function (objective): distance callback</h3>
+        <p>
+          The objective is defined via a <strong>transit callback</strong> used as the arc cost evaluator. The solver asks:
+          “What is the travel cost from node <code>i</code> to node <code>j</code>?”
+        </p>
+        <pre><code class="language-python"># 2. Define Cost (Objective Function)
+def distance_callback(from_index, to_index):
+    from_node = manager.IndexToNode(from_index)
+    to_node = manager.IndexToNode(to_index)
+    return data['distance_matrix'][from_node][to_node]
+
+transit_callback_index = routing.RegisterTransitCallback(distance_callback)
+routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index)
+</code></pre>
+      </section>
+
+      <section id="ortools-capacity" class="project-subsection">
+        <h3>4.6 Capacity constraint (dimension)</h3>
+        <p>
+          Capacity is tracked with a dedicated <em>dimension</em> called <code>Capacity</code>. OR-Tools keeps a running cumulative
+          load along each route and enforces the per-vehicle maximum.
+        </p>
+        <pre><code class="language-python"># 3. Add Capacity Constraint (Dimension)
+def demand_callback(from_index):
+    from_node = manager.IndexToNode(from_index)
+    return data['demands'][from_node]
+
+demand_callback_index = routing.RegisterUnaryTransitCallback(demand_callback)
+routing.AddDimensionWithVehicleCapacity(
+    demand_callback_index,
+    0,  # slack (0 = no waiting for capacity)
+    data['vehicle_capacities'],  # vehicle capacities
+    True,  # start cumul at 0
+    'Capacity',
+) #keeps a running total of demand along each route and prevents any vehicle from exceeding its capacity limit
+</code></pre>
+      </section>
+
+      <section id="ortools-time-windows" class="project-subsection">
+        <h3>4.7 Time windows (time callback + time dimension)</h3>
+        <p>
+          Time feasibility is captured by another dimension called <code>Time</code>. Its transit value combines
+          <strong>service time</strong> at the current customer and <strong>travel time</strong> to the next.
+          We allow <em>slack</em> (waiting time), which lets the solver arrive early and wait until a window opens.
+        </p>
+
+        <pre><code class="language-python"># 4. Add Time Window Constraint (Dimension)
+def time_callback(from_index, to_index):
+    """Returns the travel time + service time between two nodes."""
+    from_node = manager.IndexToNode(from_index)
+    to_node = manager.IndexToNode(to_index)
+    service = data['service_times'][from_node]
+    travel = data['distance_matrix'][from_node][to_node]
+    return service + travel
+
+time_callback_index = routing.RegisterTransitCallback(time_callback)
+routing.AddDimension(
+    time_callback_index,
+    1000,  # slack_max (max allowed waiting time per stop)
+    1000,  # capacity (max total time per vehicle)
+    True,  # fix_start_cumul_to_zero
+    'Time',
+)
+</code></pre>
+
+        <p>
+          With the <code>Time</code> dimension created, we enforce time windows by restricting the cumulative time variable
+          at each node:
+        </p>
+        <pre><code class="language-python"># Get the Time Dimension object and apply time windows
+time_dimension = routing.GetDimensionOrDie('Time')
+for location_idx, time_window in enumerate(data['time_windows']):
+    if location_idx == data['depot']:
+        continue
+    index = manager.NodeToIndex(location_idx)
+    time_dimension.CumulVar(index).SetRange(time_window[0], time_window[1])
+    
+# Set time window for the depot
+depot_idx = data['depot']
+index = manager.NodeToIndex(depot_idx)
+time_dimension.CumulVar(index).SetRange(
+    data['time_windows'][depot_idx][0],
+    data['time_windows'][depot_idx][1]
+)
+
+
+# Add start/end time constraints for each vehicle
+for i in range(data['num_vehicles']):
+    routing.AddVariableMaximizedByFinalizer(
+        time_dimension.CumulVar(routing.Start(i))
+    )
+    routing.AddVariableMinimizedByFinalizer(
+        time_dimension.CumulVar(routing.End(i))
+    )
+</code></pre>
+
+        <p>
+          Note: because slack (waiting) is allowed, <code>time_dimension.CumulVar(index)</code> behaves like a <em>service start time</em>
+          variable rather than raw arrival time.
+        </p>
+      </section>
+
+      <section id="ortools-search" class="project-subsection">
+        <h3>4.8 Search strategy and solving</h3>
+        <p>
+          OR-Tools routing solves in two phases: it constructs an initial solution, then improves it via local search.
+          Here we use <code>PATH_CHEAPEST_ARC</code> for the first solution and <code>GUIDED_LOCAL_SEARCH</code> as the metaheuristic.
+        </p>
+        <pre><code class="language-python"># 5. Set Search Strategy
+search_parameters = pywrapcp.DefaultRoutingSearchParameters()
+search_parameters.first_solution_strategy = (
+    routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
+)
+search_parameters.local_search_metaheuristic = (
+    routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+)
+search_parameters.time_limit.seconds = 30  # Set a 30-second time limit
+
+
+# 6. Solve the Problem
+print("Solving... (may take up to 30 seconds)")
+solution = routing.SolveWithParameters(search_parameters)
+</code></pre>
+      </section>
+
+      <section id="ortools-output" class="project-subsection">
+        <h3>4.9 Printing and plotting the solution</h3>
+        <p>
+          The notebook provides two helpers: one prints each route with cumulative load and time, and one plots the
+          resulting routes on the 2D plane.
+        </p>
+        <pre><code class="language-python">def print_solution(data, manager, routing, solution):
+    """Prints the solution to the console."""
+    print(f'Objective (Total Distance): {solution.ObjectiveValue()} units\n')
+    
+    time_dimension = routing.GetDimensionOrDie('Time')
+    total_time = 0
+    total_load = 0
+    
+    for vehicle_id in range(data['num_vehicles']):
+        index = routing.Start(vehicle_id)
+        plan_output = f'Route for Vehicle {vehicle_id}:\n'
+        route_distance = 0
+        route_load = 0
+        
+        while not routing.IsEnd(index):
+            node_index = manager.IndexToNode(index)
+            
+            # Get variables for this node
+            route_load += data['demands'][node_index]
+            time_var = time_dimension.CumulVar(index)
+            time_min = solution.Min(time_var)
+            time_max = solution.Max(time_var)
+            
+            # Format output
+            plan_output += (
+                f'  {node_index} (Load: {route_load}) '
+                f'(Time: {time_min}, {time_max}) ->\n'
+            )
+            
+            # Get distance to next node
+            previous_index = index
+            index = solution.Value(routing.NextVar(index))
+            route_distance += routing.GetArcCostForVehicle(
+                previous_index, index, vehicle_id
+            )
+            
+        # Handle the last node (depot)
+        node_index = manager.IndexToNode(index)
+        time_var = time_dimension.CumulVar(index)
+        plan_output += (
+            f'  {node_index} (Load: {route_load}) '
+            f'(Time: {solution.Min(time_var)}, {solution.Max(time_var)})\n'
+        )
+        
+        plan_output += f'Distance of the route: {route_distance} units\n'
+        plan_output += f'Load of the route: {route_load}\n'
+        print(plan_output)
+        
+        total_time += solution.Min(time_var)
+        total_load += route_load
+        
+    print(f'Total Load of all routes: {total_load}')
+    print(f'Total Time of all routes: {total_time}')
+
+
+def plot_solution(data, manager, routing, solution):
+    """Plots the solution on a 2D graph."""
+    print("Plotting routes...")
+    plt.figure(figsize=(12, 8))
+    
+    # Plot all locations
+    locations = data['locations']
+    x = [loc[0] for loc in locations]
+    y = [loc[1] for loc in locations]
+    plt.scatter(x[1:], y[1:], c='gray', label='Customers')
+    
+    # Plot the depot (Node 0)
+    plt.scatter(x[0], y[0], c='red', marker='*', s=200, label='Depot (0)')
+    
+    # Add labels
+    for i, (xi, yi) in enumerate(locations):
+        plt.text(xi + 0.5, yi + 0.5, str(i))
+
+    # Plot the routes
+    colors = plt.cm.jet([i / data['num_vehicles'] for i in range(data['num_vehicles'])])
+    
+    for vehicle_id in range(data['num_vehicles']):
+        index = routing.Start(vehicle_id)
+        route_x = []
+        route_y = []
+        
+        while not routing.IsEnd(index):
+            node_index = manager.IndexToNode(index)
+            route_x.append(locations[node_index][0])
+            route_y.append(locations[node_index][1])
+            index = solution.Value(routing.NextVar(index))
+        
+        # Add the end node (depot)
+        node_index = manager.IndexToNode(index)
+        route_x.append(locations[node_index][0])
+        route_y.append(locations[node_index][1])
+        
+        # Plot if the route is used
+        if len(route_x) &gt; 2: # Only plot routes that do more than Depot -&gt; Depot
+            plt.plot(route_x, route_y, color=colors[vehicle_id],
+                     marker='o', markersize=5,
+                     label=f'Vehicle {vehicle_id}')
+
+    plt.title('Vehicle Routing Problem with Time Windows')
+    plt.xlabel('X Coordinate')
+    plt.ylabel('Y Coordinate')
+    plt.legend()
+    plt.grid(True)
+    plt.show()
+    
+</code></pre>
+
+        <pre><code class="language-python"># 7. Print and Plot Solution
+if solution:
+    print_solution(data, manager, routing, solution)
+    plot_solution(data, manager, routing, solution)
+else:
+    print('No solution found!')
+</code></pre>
+      </section>
     </section>
 
     <section id="classical" class="project-section">
@@ -103,7 +679,23 @@ description: Classical (OR-Tools/Pyomo) and quantum-inspired (QAOA/annealing) ap
       <h4>Contents</h4>
       <ul>
         <li><a href="#overview">Overview</a></li>
-        <li><a href="#formulation">Formulation</a></li>
+        <li><a href="#problem-understanding">1. VRP → VRPTW</a></li>
+        <li><a href="#milp">2. MILP formulation</a></li>
+        <li><a href="#full-model">3. Full model summary</a></li>
+        <li>
+          <a href="#ortools-notebook">4. OR-Tools notebook</a>
+          <ul>
+            <li><a href="#ortools-understanding">4.1 Understanding VRPTW</a></li>
+            <li><a href="#ortools-imports">4.2 Imports</a></li>
+            <li><a href="#ortools-data-model">4.3 Data model</a></li>
+            <li><a href="#ortools-routing-model">4.4 Routing model</a></li>
+            <li><a href="#ortools-cost">4.5 Cost function</a></li>
+            <li><a href="#ortools-capacity">4.6 Capacity dimension</a></li>
+            <li><a href="#ortools-time-windows">4.7 Time windows</a></li>
+            <li><a href="#ortools-search">4.8 Search strategy</a></li>
+            <li><a href="#ortools-output">4.9 Output + plotting</a></li>
+          </ul>
+        </li>
         <li><a href="#classical">Classical baselines</a></li>
         <li><a href="#quantum">Quantum-inspired approaches</a></li>
         <li><a href="#notes">Notes</a></li>
